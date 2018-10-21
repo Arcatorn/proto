@@ -16,7 +16,7 @@ public class FillGauge : MonoBehaviour {
 	Color color_3 = new Color(1,0,0.5f,1);
 	float angleFromLaunch;
 	Color actualColor;
-	public SpriteRenderer sr;
+	public MeshRenderer meshRenderer;
 
 private void Awake() {
 	fillBarComponent = fillBar.GetComponent<Image>();
@@ -42,7 +42,7 @@ private void Awake() {
 			if (Input.GetKeyDown(KeyCode.Joystick1Button5))
 			{
 				ColorSelectionCalculation(fillBarComponent.fillAmount);
-				sr.color = actualColor;
+				meshRenderer.material.color = actualColor;
 				ResetGauge();
 				isFilling = false;
 			}
