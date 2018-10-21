@@ -103,7 +103,7 @@ private void Awake() {
 				}
 
 				float targetAngle = (Mathf.Atan2 (input.y, input.x) * Mathf.Rad2Deg) - 90;
-				fillBar.transform.rotation = Quaternion.Euler (90, 0, targetAngle);
+				fillBar.transform.rotation = Quaternion.Euler (0, 0, targetAngle);
 				angleFromLaunch = targetAngle;
 				isFilling = true;
 			}
