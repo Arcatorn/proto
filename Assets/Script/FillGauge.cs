@@ -11,9 +11,9 @@ public class FillGauge : MonoBehaviour {
 	bool isFilling = false;
 	public GameObject fillBar;
 	public GameObject chromaCircle;
-	Color color_1 = new Color(1,0,1,1);
-	Color color_2 = new Color(1,1,0,1);
-	Color color_3 = new Color(0,1,1,1);
+	Color color_1 = new Color(0,0.5f,1,1);
+	Color color_2 = new Color(0.5f,1,0,1);
+	Color color_3 = new Color(1,0,0.5f,1);
 	float angleFromLaunch;
 	Color actualColor;
 	public SpriteRenderer sr;
@@ -43,8 +43,6 @@ private void Awake() {
 			{
 				ColorSelectionCalculation(fillBarComponent.fillAmount);
 				sr.color = actualColor;
-				//sr.color = Color.red;
-				Debug.Log(sr.color);
 				ResetGauge();
 				isFilling = false;
 			}
@@ -65,7 +63,7 @@ private void Awake() {
 	void ResetGauge()
 	{
 		fillBar.transform.Rotate(Vector3.zero);
-		fillBarComponent.fillAmount = 0.01f;
+		fillBarComponent.fillAmount = 0;
 	}
 
 	void ActivateChromaCircle()
@@ -112,30 +110,29 @@ private void Awake() {
 	}
 
 	void ColorSelectionCalculation(float amountFilled)
-	{
-		float x = angleFromLaunch + amountFilled * 360;
-		if (x > 180)
+	{	
+		float x = (angleFromLaunch - 90) - amountFilled * 360;
+		if (x < -360)
 		{
-			x -= 360;
+			x += 360;
 		}
 
-		if (x <= -60)
+		if (x >= -120)
 		{
-			var y = x + 180;
-			var z = y / 120;
-			actualColor = Color.Lerp(color_1, color_3, z);
+			var z = Mathf.Abs(x) / 120;
+			actualColor = Color.Lerp(color_1, color_2, z);
 		}
-		else if (x > -60 && x < 60)
+		else if (x < -120 && x >= -240)
 		{
-			var y = x + 60;
-			var z = y / 120;
-			actualColor = Color.Lerp(color_3, color_2, z);
+			var y = x + 120;
+			var z = Mathf.Abs(y) / 120;
+			actualColor = Color.Lerp(color_2, color_3, z);
 		}
 		else{
-			var y = x - 60;
-			var z = y / 120;
-			actualColor = Color.Lerp(color_2, color_1, z);
+			var y = x + 240;
+			var z = Mathf.Abs(y) / 120;
+			actualColor = Color.Lerp(color_3, color_1, z);
 		}
-		Debug.Log(actualColor);
+		
 	}
 }
