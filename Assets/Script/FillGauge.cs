@@ -17,6 +17,7 @@ public class FillGauge : MonoBehaviour {
 	float angleFromLaunch;
 	Color actualColor;
 	public MeshRenderer meshRenderer;
+	public static float AvatarAngleColor = 0;
 
 private void Awake() {
 	fillBarComponent = fillBar.GetComponent<Image>();
@@ -116,7 +117,7 @@ private void Awake() {
 		{
 			x += 360;
 		}
-
+		AvatarAngleColor = x;
 		if (x >= -120)
 		{
 			var z = Mathf.Abs(x) / 120;
