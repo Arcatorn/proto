@@ -67,6 +67,7 @@ public class Generation : MonoBehaviour {
 
 	 void ChangeAgentsColor()
 	{
+
 		timer += Time.deltaTime;
 		if (timer >= timerMax)
 		{

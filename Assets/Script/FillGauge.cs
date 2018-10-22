@@ -25,6 +25,19 @@ private void Awake() {
 }
 
 	void Update () {
+		if (Input.GetButtonDown("Start"))
+        {
+            if (Time.timeScale == 1)
+            {
+                Time.timeScale = 0;
+            }
+            else
+            {
+                Time.timeScale = 1;
+            }
+
+        }
+
 		if (isFilling)
 		{
 			if (!chromaCircleComponent.enabled)
@@ -93,10 +106,10 @@ private void Awake() {
 		var xAxis = Input.GetAxis("R_XAxis");
 		Vector2 input = new Vector2(xAxis, yAxis);
 
-		if (yAxis > 0.5f ||
+		if ((yAxis > 0.5f ||
 			yAxis < -0.5f ||
 			xAxis > 0.5f ||
-			xAxis <-0.5f)
+			xAxis <-0.5f) && !isFilling)
 			{
 				if (input.sqrMagnitude > 1)
 				{
