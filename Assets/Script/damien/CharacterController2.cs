@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharacterController2 : MonoBehaviour
 {
+    bool correction = false;
     Rigidbody rigid;
     Vector3 position_quand_rebond;
     public bool dashing = false;
@@ -40,10 +41,10 @@ public class CharacterController2 : MonoBehaviour
         {
             dash(mouse_pos);
         }
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && dashing && !correction)
         {
-            dashing = false;
-            ended = true;
+            dash(mouse_pos);
+            correction = true;
         }
         if (dashing)
         {
@@ -59,6 +60,8 @@ public class CharacterController2 : MonoBehaviour
     Vector3 mousepos_when_dash = Vector3.zero;
     void dash(Vector3 mousepos)
     {
+        rigid.velocity = Vector3.zero;
+        rigid.angularVelocity = Vector3.zero;
         dashing = true;
         mousepos_when_dash = mousepos;
 
@@ -68,7 +71,6 @@ public class CharacterController2 : MonoBehaviour
         if (Physics.Raycast(direction, out hit, Mathf.Infinity))
         {
             distance = (hit.point - transform.position).magnitude;
-            // print(distance);
             Vector3 force_direction = new Vector3(mouse_pos.x - transform.position.x, 0, mouse_pos.z - transform.position.z).normalized;
             rigid.AddForce(force_direction * Time.deltaTime * speed, ForceMode.VelocityChange);
         }
@@ -82,51 +84,32 @@ public class CharacterController2 : MonoBehaviour
             float detection = (hit.point - transform.position).magnitude;
             if (Mathf.Abs(detection) < 1f)
             {
-                rotate(hit, hit.point);
-                rebond();
+                //rotate(hit, hit.point);
+                rebond(mouse_pos);
             }
         }
     }
-    void rebond()
+    void rebond(Vector3 mousepos)
     {
         RaycastHit hit;
         if (Physics.Raycast(head.transform.position, head.transform.forward, out hit, Mathf.Infinity))
         {
-            float detection = (hit.point - transform.position).magnitude;
-            // print(distance + "    +    " + detection);
-            if (distance - detection <= 0)
+            rigid.velocity = Vector3.zero;
+            rigid.angularVelocity = Vector3.zero;
+            dashing = true;
+
+
+            Ray direction = new Ray(transform.position, mousepos);
+            if (Physics.Raycast(direction, out hit, Mathf.Infinity))
             {
-                rigid.AddForce(head.transform.forward * Time.deltaTime * speed, ForceMode.VelocityChange);
-                ended = false;
-                dashing = false;
+                distance -= (hit.point - transform.position).magnitude;
+                Vector3 force_direction = new Vector3(mouse_pos.x - transform.position.x, 0, mouse_pos.z - transform.position.z).normalized;
+                rigid.AddForce(force_direction * Time.deltaTime * speed, ForceMode.VelocityChange);
             }
-            else
-            {
-                //rebond();
-            }
+            ended = false;
         }
     }
-    void rotate(RaycastHit hit, Vector3 point)
-    {
-        rigid.velocity = Vector3.zero;
-        rigid.angularVelocity = Vector3.zero;
-        position_quand_rebond = transform.position;
 
-        /*  var posplayer = transform.position;
-          var pos1 = new Vector3(hit.transform.position.x - (hit.transform.localScale.x / 2), hit.transform.position.y, hit.transform.position.z - (hit.transform.localScale.z / 2));
-          var pos2 = new Vector3(hit.transform.position.x + (hit.transform.localScale.x / 2), hit.transform.position.y, hit.transform.position.z + (hit.transform.localScale.z / 2));
-
-          var cote1 = pos1 - posplayer;
-          var cote2 = pos2 - posplayer;
-          var normal = Vector3.Cross(pos1, pos2).normalized;*/
-        //print(Vector3.Angle(transform.position,hit.normal));
-        var player_rot = transform.eulerAngles;
-        print(player_rot.y);
-        player_rot.y += 45;
-        transform.rotation = Quaternion.Euler(player_rot);
-        print(player_rot.y);
-
-    }
     void stopdash()
     {
         float test = (position_quand_rebond - transform.position).magnitude;
@@ -138,3 +121,32 @@ public class CharacterController2 : MonoBehaviour
         }
     }
 }
+
+/*void rotate(RaycastHit hit, Vector3 point)
+    {
+        rigid.velocity = Vector3.zero;
+        rigid.angularVelocity = Vector3.zero;
+        position_quand_rebond = transform.position;
+
+        var posplayer = transform.position;
+        // var pos1 = new Vector3(hit.transform.position.x - (hit.transform.localScale.x / 2), hit.transform.position.y, hit.transform.position.z - (hit.transform.localScale.z / 2));
+        //   var pos2 = new Vector3(hit.transform.position.x + (hit.transform.localScale.x / 2), hit.transform.position.y, hit.transform.position.z + (hit.transform.localScale.z / 2));
+        var pos1 = new Vector3(hit.transform.position.x - (hit.transform.localScale.x / 2), hit.transform.position.y, hit.transform.position.z - (hit.transform.localScale.z / 2));
+        var pos2 = new Vector3(hit.transform.position.x, hit.transform.position.y, hit.transform.position.z);
+
+        var hypo = new Vector3(pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z).magnitude;
+        var adjacent = new Vector3(posplayer.x - pos1.x, posplayer.y - pos1.y, posplayer.z - pos1.z).magnitude;
+
+        // var cote1 = pos1 - posplayer;
+        //var cote2 = pos2 - posplayer;
+        //var normal = Vector3.Cross(pos1, pos2).normalized;
+        //print(Vector3.Angle(transform.position,hit.normal));
+        var a = adjacent / hypo;
+        print(a * Mathf.Rad2Deg);
+        var player_rot = transform.eulerAngles;
+        //  print(player_rot.y);
+        player_rot.y += 45;
+        transform.rotation = Quaternion.Euler(player_rot);
+        //print(player_rot.y);
+
+    }*/
